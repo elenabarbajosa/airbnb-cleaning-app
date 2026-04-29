@@ -14,7 +14,21 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Lista de limpieza",
-  description: "Airbnb cleaning checklist MVP",
+  description: "App de limpieza",
+  manifest: "/icons/site.webmanifest",
+  icons: {
+    icon: [
+      { url: "/icons/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+    ],
+    shortcut: "/icons/favicon.ico",
+    apple: "/icons/apple-touch-icon.png",
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Limpieza",
+  },
 };
 
 export default function RootLayout({
