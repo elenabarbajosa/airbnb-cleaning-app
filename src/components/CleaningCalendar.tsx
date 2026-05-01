@@ -48,14 +48,14 @@ export function CleaningCalendar({
       <div className="flex items-center justify-between">
         <Link
           href={`/admin/history?month=${format(prev, "yyyy-MM")}`}
-          className="text-sm font-semibold text-zinc-700 underline"
+          className="text-sm font-semibold text-sky-700 underline decoration-sky-300"
         >
           Anterior
         </Link>
         <div className="text-base font-semibold">{monthLabel}</div>
         <Link
           href={`/admin/history?month=${format(next, "yyyy-MM")}`}
-          className="text-sm font-semibold text-zinc-700 underline"
+          className="text-sm font-semibold text-sky-700 underline decoration-sky-300"
         >
           Siguiente
         </Link>
@@ -76,7 +76,7 @@ export function CleaningCalendar({
           const base = cn(
             "h-12 rounded-xl border text-sm font-semibold flex items-center justify-center",
             inMonth ? "opacity-100" : "opacity-40",
-            isToday(d) ? "ring-2 ring-zinc-400" : null,
+            isToday(d) ? "ring-2 ring-sky-400" : null,
             info ? toneClasses[info.tone] : "bg-white border-zinc-200 text-zinc-700",
           );
 

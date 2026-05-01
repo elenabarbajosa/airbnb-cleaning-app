@@ -25,14 +25,14 @@ export function PublicCleaningHome() {
   }
 
   return (
-    <div className="min-h-[100dvh] w-full bg-[#faf7f2] px-4 py-6">
+    <div className="min-h-[100dvh] w-full bg-[#f7f8fb] px-4 py-6">
       <div className="mx-auto w-full max-w-xl space-y-4">
         <div className="space-y-1">
           <div className="text-2xl font-semibold tracking-tight text-zinc-900">Limpeza</div>
           <div className="text-sm text-zinc-600">Aponte e conclua a lista de tarefas.</div>
         </div>
 
-        <Card className="border-zinc-200/70 bg-white/90 p-5 shadow-sm">
+        <Card className="border-zinc-200/70 bg-white/95 p-5 shadow-sm">
           <div className="text-base font-semibold text-zinc-900">Lista de tarefas</div>
           <div className="mt-4">
             <Button

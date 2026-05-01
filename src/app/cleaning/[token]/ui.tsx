@@ -111,7 +111,7 @@ export function PublicCleaningSessionClient({
   }
 
   return (
-    <div className="min-h-[100dvh] w-full bg-[#faf7f2] pb-28">
+    <div className="min-h-[100dvh] w-full bg-[#f7f8fb] pb-28">
       <div className="mx-auto w-full max-w-xl space-y-4 px-4 py-5">
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-3">
@@ -120,7 +120,7 @@ export function PublicCleaningSessionClient({
               {completedCount}/{localTasks.length}
             </div>
           </div>
-          <ProgressBar value={progress} trackClassName="bg-rose-100" barClassName="bg-rose-500" />
+          <ProgressBar value={progress} trackClassName="bg-sky-100" barClassName="bg-sky-500" className="opacity-90" />
         </div>
 
         <EvaNoteCard note={session.eva_note} title="Nota da Eva" />
@@ -164,7 +164,7 @@ export function PublicCleaningSessionClient({
         />
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-zinc-200 bg-[#faf7f2]/95 backdrop-blur">
+      <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-zinc-200 bg-[#f7f8fb]/95 backdrop-blur">
         <div className={cn("mx-auto w-full max-w-xl px-4 py-4 pb-safe")}>
           <Button
             size="xl"

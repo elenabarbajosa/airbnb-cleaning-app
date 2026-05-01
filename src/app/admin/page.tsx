@@ -26,7 +26,7 @@ export default async function AdminDashboard() {
               </div>
               <div className="text-sm text-zinc-600">{new Date(latest.started_at).toLocaleString()}</div>
             </div>
-            <Link className="text-sm font-semibold text-zinc-900 underline" href={`/admin/history/${latest.id}`}>
+            <Link className="text-sm font-semibold text-sky-700 underline decoration-sky-300" href={`/admin/history/${latest.id}`}>
               Ver
             </Link>
           </div>

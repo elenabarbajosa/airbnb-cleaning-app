@@ -112,7 +112,10 @@ export default async function AdminHistoryPage({
                 </div>
                 <div className="flex flex-col items-end gap-2">
                   <StatusBadge label={label} tone={tone} />
-                  <Link className="text-sm font-semibold text-zinc-900 underline" href={`/admin/history/${s.id}`}>
+                  <Link
+                    className="text-sm font-semibold text-sky-700 underline decoration-sky-300"
+                    href={`/admin/history/${s.id}`}
+                  >
                     Ver
                   </Link>
                 </div>

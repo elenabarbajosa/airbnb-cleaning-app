@@ -129,7 +129,12 @@ export function ChecklistEditor({ initialTasks }: { initialTasks: ChecklistTask[
             placeholder="p. ej., Baño"
           />
           <Textarea label="Descripción (opcional)" value={newDesc} onChange={(e) => setNewDesc(e.target.value)} />
-          <Button size="lg" className="w-full sm:w-auto" onClick={addTask} disabled={isPending}>
+          <Button
+            size="lg"
+            className="w-full bg-sky-600 active:bg-sky-500 disabled:bg-sky-200 sm:w-auto"
+            onClick={addTask}
+            disabled={isPending}
+          >
             Añadir
           </Button>
         </div>
@@ -149,7 +154,7 @@ export function ChecklistEditor({ initialTasks }: { initialTasks: ChecklistTask[
               <Card key={t.id} className="p-4">
                 <div className="flex items-start gap-3">
                   <div className="mt-0.5 shrink-0">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-zinc-100 text-sm font-bold text-zinc-700">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-50 text-sm font-bold text-sky-900 border border-sky-100">
                       {idx + 1}
                     </div>
                     <div className="mt-2 flex flex-col gap-2">
@@ -206,7 +211,7 @@ export function ChecklistEditor({ initialTasks }: { initialTasks: ChecklistTask[
                           type="checkbox"
                           checked={t.is_active}
                           onChange={(e) => updateLocal(t.id, { is_active: e.target.checked })}
-                          className="h-5 w-5 accent-zinc-900"
+                          className="h-5 w-5 accent-sky-600"
                         />
                         Activa
                       </label>
@@ -215,7 +220,7 @@ export function ChecklistEditor({ initialTasks }: { initialTasks: ChecklistTask[
                           type="checkbox"
                           checked={t.is_important}
                           onChange={(e) => updateLocal(t.id, { is_important: e.target.checked })}
-                          className="h-5 w-5 accent-zinc-900"
+                          className="h-5 w-5 accent-sky-600"
                         />
                         Importante
                       </label>
@@ -248,7 +253,12 @@ export function ChecklistEditor({ initialTasks }: { initialTasks: ChecklistTask[
                       <Button variant="secondary" className="w-full sm:w-auto" onClick={() => saveTask(t)} disabled={isPending}>
                         Guardar
                       </Button>
-                      <Button variant="danger" className="w-full sm:w-auto" onClick={() => deleteTask(t.id)} disabled={isPending}>
+                      <Button
+                        variant="danger"
+                        className="w-full bg-red-600/90 active:bg-red-600 disabled:bg-red-200 sm:w-auto"
+                        onClick={() => deleteTask(t.id)}
+                        disabled={isPending}
+                      >
                         Eliminar
                       </Button>
                     </div>

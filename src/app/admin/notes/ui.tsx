@@ -32,7 +32,7 @@ export function NextNoteEditor({ noteId, initialNote }: { noteId: string | null;
           onChange={(e) => setNote(e.target.value)}
           placeholder="p. ej., Por favor, revisa bien la ventana del balcón."
         />
-        <Button size="lg" onClick={save} disabled={isPending}>
+        <Button size="lg" className="bg-sky-600 active:bg-sky-500 disabled:bg-sky-200" onClick={save} disabled={isPending}>
           {isPending ? "Guardando…" : "Guardar nota"}
         </Button>
         {error ? <div className="text-sm text-red-700">{error}</div> : null}

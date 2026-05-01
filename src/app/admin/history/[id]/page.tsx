@@ -57,9 +57,9 @@ export default async function AdminHistoryDetail({ params }: { params: Promise<{
       </Card>
 
       {session.eva_note ? (
-        <Card className="border-blue-200 bg-blue-50 p-4">
-          <div className="text-sm font-semibold text-blue-900">Nota de Eva</div>
-          <div className="mt-1 whitespace-pre-wrap text-sm text-blue-900/90">{session.eva_note}</div>
+        <Card className="border-sky-200 bg-sky-50 p-4">
+          <div className="text-sm font-semibold text-sky-900">Nota de Eva</div>
+          <div className="mt-1 whitespace-pre-wrap text-sm text-sky-900/90">{session.eva_note}</div>
         </Card>
       ) : null}
 
