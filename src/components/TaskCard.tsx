@@ -43,6 +43,7 @@ export function TaskCard({
   onToggleIssue,
   disabled,
   labels,
+  hideIssueControls,
 }: {
   task: TaskCardTask;
   onToggleCompleted: () => void;
@@ -52,6 +53,7 @@ export function TaskCard({
   onIssueBlur: () => void;
   disabled?: boolean;
   labels?: Partial<Labels>;
+  hideIssueControls?: boolean;
 }) {
   const t = { ...defaultLabels, ...(labels ?? {}) };
   return (
@@ -90,15 +92,17 @@ export function TaskCard({
             <div className="mt-1 text-sm leading-6 text-zinc-600">{task.description}</div>
           ) : null}
 
-          <div className="mt-3">
-            <Button type="button" variant="secondary" size="md" onClick={onToggleIssue} disabled={disabled}>
-              {showIssue ? t.hideIssue : task.issue_note ? t.editIssue : t.addIssue}
-            </Button>
-          </div>
+          {!hideIssueControls ? (
+            <div className="mt-3">
+              <Button type="button" variant="secondary" size="md" onClick={onToggleIssue} disabled={disabled}>
+                {showIssue ? t.hideIssue : task.issue_note ? t.editIssue : t.addIssue}
+              </Button>
+            </div>
+          ) : null}
         </div>
       </div>
 
-      {showIssue ? (
+      {showIssue && !hideIssueControls ? (
         <div className="mt-3">
           <Textarea
             label={t.issueLabel}
