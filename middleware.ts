@@ -1,11 +1,39 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
-const PUBLIC_PATHS = ["/login", "/cleaning", "/api/cleaning"];
+const PUBLIC_PATHS = [
+  "/login",
+  "/cleaning",
+  "/api/cleaning",
+  "/icons",
+  "/favicon.ico",
+  "/manifest.json",
+  "/site.webmanifest",
+  "/icons/site.webmanifest",
+];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Always-public assets (needed for PWA + iOS Add to Home Screen)
+  if (
+    pathname.startsWith("/_next/") ||
+    pathname.startsWith("/icons/") ||
+    pathname === "/favicon.ico" ||
+    pathname === "/manifest.json" ||
+    pathname === "/site.webmanifest" ||
+    pathname === "/icons/site.webmanifest"
+  ) {
+    return NextResponse.next();
+  }
+
   if (PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
+    return NextResponse.next();
+  }
+
+  // Only protect authenticated app areas.
+  // Everything else remains public (e.g. marketing/public pages if added later).
+  if (!pathname.startsWith("/admin") && !pathname.startsWith("/maid")) {
     return NextResponse.next();
   }
 
@@ -64,6 +92,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|public).*)"],
+  // Skip middleware for static assets and public endpoints.
+  matcher: ["/((?!_next/|icons/|favicon\\.ico|manifest\\.json|site\\.webmanifest).*)"],
 };
 
