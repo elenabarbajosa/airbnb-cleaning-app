@@ -12,6 +12,28 @@ export type TaskCardTask = {
   issue_note: string | null;
 };
 
+type Labels = {
+  importantBadge: string;
+  ariaMarkIncomplete: string;
+  ariaMarkComplete: string;
+  hideIssue: string;
+  editIssue: string;
+  addIssue: string;
+  issueLabel: string;
+  issuePlaceholder: string;
+};
+
+const defaultLabels: Labels = {
+  importantBadge: "Importante",
+  ariaMarkIncomplete: "Marcar como incompleta",
+  ariaMarkComplete: "Marcar como completada",
+  hideIssue: "Ocultar incidencia",
+  editIssue: "Editar incidencia",
+  addIssue: "Añadir incidencia",
+  issueLabel: "Incidencia",
+  issuePlaceholder: "Algo roto, falta material, etc.",
+};
+
 export function TaskCard({
   task,
   onToggleCompleted,
@@ -20,6 +42,7 @@ export function TaskCard({
   showIssue,
   onToggleIssue,
   disabled,
+  labels,
 }: {
   task: TaskCardTask;
   onToggleCompleted: () => void;
@@ -28,7 +51,9 @@ export function TaskCard({
   onIssueChange: (value: string) => void;
   onIssueBlur: () => void;
   disabled?: boolean;
+  labels?: Partial<Labels>;
 }) {
+  const t = { ...defaultLabels, ...(labels ?? {}) };
   return (
     <Card
       className={cn(
@@ -47,7 +72,7 @@ export function TaskCard({
             task.is_completed ? "border-emerald-600 bg-emerald-600" : "border-zinc-300 bg-white",
             disabled ? "opacity-60" : "active:scale-[0.98]",
           )}
-          aria-label={task.is_completed ? "Marcar como incompleta" : "Marcar como completada"}
+          aria-label={task.is_completed ? t.ariaMarkIncomplete : t.ariaMarkComplete}
         >
           {task.is_completed ? <div className="text-white text-lg leading-10 font-bold">✓</div> : null}
         </button>
@@ -57,7 +82,7 @@ export function TaskCard({
             <div className="text-base font-semibold leading-6 text-zinc-900">{task.title}</div>
             {task.is_important ? (
               <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">
-                Important
+                {t.importantBadge}
               </span>
             ) : null}
           </div>
@@ -67,7 +92,7 @@ export function TaskCard({
 
           <div className="mt-3">
             <Button type="button" variant="secondary" size="md" onClick={onToggleIssue} disabled={disabled}>
-              {showIssue ? "Ocultar incidencia" : task.issue_note ? "Editar incidencia" : "Añadir incidencia"}
+              {showIssue ? t.hideIssue : task.issue_note ? t.editIssue : t.addIssue}
             </Button>
           </div>
         </div>
@@ -76,8 +101,8 @@ export function TaskCard({
       {showIssue ? (
         <div className="mt-3">
           <Textarea
-            label="Incidencia"
-            placeholder="Algo roto, falta material, etc."
+            label={t.issueLabel}
+            placeholder={t.issuePlaceholder}
             value={task.issue_note ?? ""}
             onChange={(e) => onIssueChange(e.target.value)}
             onBlur={onIssueBlur}

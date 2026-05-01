@@ -19,6 +19,7 @@ export function ChecklistEditor({ initialTasks }: { initialTasks: ChecklistTask[
   const [tasks, setTasks] = useState<ChecklistTask[]>(initialTasks);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   const nextSort = useMemo(() => (tasks.length ? Math.max(...tasks.map((t) => t.sort_order)) + 1 : 1), [tasks]);
   const [newTitle, setNewTitle] = useState("");
@@ -32,6 +33,28 @@ export function ChecklistEditor({ initialTasks }: { initialTasks: ChecklistTask[
 
   function updateLocal(id: string, patch: Partial<ChecklistTask>) {
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)));
+  }
+
+  function normalizeOrder(list: ChecklistTask[]) {
+    return [...list].sort((a, b) => a.sort_order - b.sort_order);
+  }
+
+  function moveTask(id: string, dir: -1 | 1) {
+    setTasks((prev) => {
+      const sorted = normalizeOrder(prev);
+      const idx = sorted.findIndex((t) => t.id === id);
+      const nextIdx = idx + dir;
+      if (idx < 0 || nextIdx < 0 || nextIdx >= sorted.length) return prev;
+      const a = sorted[idx]!;
+      const b = sorted[nextIdx]!;
+      const aOrder = a.sort_order;
+      const bOrder = b.sort_order;
+      return normalizeOrder(
+        sorted.map((t) =>
+          t.id === a.id ? { ...t, sort_order: bOrder } : t.id === b.id ? { ...t, sort_order: aOrder } : t,
+        ),
+      );
+    });
   }
 
   function addTask() {
@@ -91,7 +114,10 @@ export function ChecklistEditor({ initialTasks }: { initialTasks: ChecklistTask[
 
   return (
     <div className="space-y-4">
-      <div className="text-2xl font-semibold tracking-tight">Lista de tareas (plantilla)</div>
+      <div className="space-y-1">
+        <div className="text-2xl font-semibold tracking-tight">Lista de tareas (plantilla)</div>
+        <div className="text-sm text-zinc-600">Define el orden y qué se muestra en cada limpieza.</div>
+      </div>
 
       <Card className="p-4">
         <div className="text-base font-semibold">Añadir tarea</div>
@@ -102,12 +128,8 @@ export function ChecklistEditor({ initialTasks }: { initialTasks: ChecklistTask[
             onChange={(e) => setNewTitle(e.target.value)}
             placeholder="p. ej., Baño"
           />
-          <Textarea
-            label="Descripción (opcional)"
-            value={newDesc}
-            onChange={(e) => setNewDesc(e.target.value)}
-          />
-          <Button size="lg" onClick={addTask} disabled={isPending}>
+          <Textarea label="Descripción (opcional)" value={newDesc} onChange={(e) => setNewDesc(e.target.value)} />
+          <Button size="lg" className="w-full sm:w-auto" onClick={addTask} disabled={isPending}>
             Añadir
           </Button>
         </div>
@@ -118,61 +140,123 @@ export function ChecklistEditor({ initialTasks }: { initialTasks: ChecklistTask[
       ) : null}
 
       <div className="space-y-3">
-        {tasks.map((t) => (
-          <Card key={t.id} className="p-4">
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <Input
-                label="Título"
-                value={t.title}
-                onChange={(e) => updateLocal(t.id, { title: e.target.value })}
-              />
-              <Input
-                label="Orden"
-                type="number"
-                inputMode="numeric"
-                value={String(t.sort_order)}
-                onChange={(e) => updateLocal(t.id, { sort_order: Number(e.target.value || 0) })}
-              />
-            </div>
-            <div className="mt-3">
-              <Textarea
-                label="Descripción"
-                value={t.description ?? ""}
-                onChange={(e) => updateLocal(t.id, { description: e.target.value })}
-              />
-            </div>
+        {tasks
+          .slice()
+          .sort((a, b) => a.sort_order - b.sort_order)
+          .map((t, idx) => {
+            const isOpen = Boolean(expanded[t.id]);
+            return (
+              <Card key={t.id} className="p-4">
+                <div className="flex items-start gap-3">
+                  <div className="mt-0.5 shrink-0">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-zinc-100 text-sm font-bold text-zinc-700">
+                      {idx + 1}
+                    </div>
+                    <div className="mt-2 flex flex-col gap-2">
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="md"
+                        className="h-10 w-10 px-0"
+                        onClick={() => moveTask(t.id, -1)}
+                        disabled={isPending || idx === 0}
+                        aria-label="Subir"
+                        title="Subir"
+                      >
+                        ↑
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="md"
+                        className="h-10 w-10 px-0"
+                        onClick={() => moveTask(t.id, 1)}
+                        disabled={isPending || idx === tasks.length - 1}
+                        aria-label="Bajar"
+                        title="Bajar"
+                      >
+                        ↓
+                      </Button>
+                    </div>
+                  </div>
 
-            <div className="mt-3 flex flex-wrap items-center gap-4">
-              <label className="inline-flex items-center gap-2 text-sm font-medium text-zinc-700">
-                <input
-                  type="checkbox"
-                  checked={t.is_active}
-                  onChange={(e) => updateLocal(t.id, { is_active: e.target.checked })}
-                  className="h-5 w-5"
-                />
-                Activa
-              </label>
-              <label className="inline-flex items-center gap-2 text-sm font-medium text-zinc-700">
-                <input
-                  type="checkbox"
-                  checked={t.is_important}
-                  onChange={(e) => updateLocal(t.id, { is_important: e.target.checked })}
-                  className="h-5 w-5"
-                />
-                Importante
-              </label>
+                  <div className="min-w-0 flex-1 space-y-3">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+                      <div className="min-w-0 flex-1">
+                        <Input
+                          label="Título"
+                          value={t.title}
+                          onChange={(e) => updateLocal(t.id, { title: e.target.value })}
+                        />
+                      </div>
+                      <div className="sm:w-40">
+                        <Input
+                          label="Orden"
+                          type="number"
+                          inputMode="numeric"
+                          value={String(t.sort_order)}
+                          onChange={(e) => updateLocal(t.id, { sort_order: Number(e.target.value || 0) })}
+                        />
+                      </div>
+                    </div>
 
-              <div className="ml-auto flex gap-2">
-                <Button variant="secondary" onClick={() => saveTask(t)} disabled={isPending}>
-                  Guardar
-                </Button>
-                <Button variant="danger" onClick={() => deleteTask(t.id)} disabled={isPending}>
-                  Eliminar
-                </Button>
-              </div>
-            </div>
-          </Card>
-        ))}
+                    <div className="flex flex-wrap items-center gap-4">
+                      <label className="inline-flex items-center gap-2 text-sm font-medium text-zinc-700">
+                        <input
+                          type="checkbox"
+                          checked={t.is_active}
+                          onChange={(e) => updateLocal(t.id, { is_active: e.target.checked })}
+                          className="h-5 w-5 accent-zinc-900"
+                        />
+                        Activa
+                      </label>
+                      <label className="inline-flex items-center gap-2 text-sm font-medium text-zinc-700">
+                        <input
+                          type="checkbox"
+                          checked={t.is_important}
+                          onChange={(e) => updateLocal(t.id, { is_important: e.target.checked })}
+                          className="h-5 w-5 accent-zinc-900"
+                        />
+                        Importante
+                      </label>
+
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="md"
+                        className="ml-auto"
+                        onClick={() => setExpanded((m) => ({ ...m, [t.id]: !m[t.id] }))}
+                      >
+                        {isOpen ? "Ocultar descripción" : t.description?.trim() ? "Ver/editar descripción" : "Añadir descripción"}
+                      </Button>
+                    </div>
+
+                    {isOpen ? (
+                      <Textarea
+                        label="Descripción"
+                        value={t.description ?? ""}
+                        onChange={(e) => updateLocal(t.id, { description: e.target.value })}
+                      />
+                    ) : t.description?.trim() ? (
+                      <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-700">
+                        <div className="font-semibold text-zinc-900">Descripción</div>
+                        <div className="mt-1 whitespace-pre-wrap">{t.description}</div>
+                      </div>
+                    ) : null}
+
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+                      <Button variant="secondary" className="w-full sm:w-auto" onClick={() => saveTask(t)} disabled={isPending}>
+                        Guardar
+                      </Button>
+                      <Button variant="danger" className="w-full sm:w-auto" onClick={() => deleteTask(t.id)} disabled={isPending}>
+                        Eliminar
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            );
+          })}
       </div>
     </div>
   );
